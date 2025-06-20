@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learner Login</title>
+  <style>
+    body {
+      background: linear-gradient(#2E3192, #0e1627);
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background-color: white;
+      width: 500px;
+      border: 1px solid black;
+      border-radius: 20px;
+      padding: 40px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0 20px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: #5a67d8;
+      color: white;
+      padding: 12px 24px;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #434190;
+    }
+
+    p {
+      margin-top: 30px;
+    }
+
+    a {
+      color: #5a67d8;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>Learner Login</h2>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email" required /><br />
+      <input type="password" id="password" placeholder="Password" required /><br />
+      <button type="submit">Login</button>
+    </form>
+    <p>New user? <a href="learner_register.html">Register here</a></p>
+  </div>
+
+  <script>
+    const apiBase = window.location.origin;
+    const loginForm = document.getElementById('loginForm');
+
+    loginForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch(`${apiBase}/api/learners/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          sessionStorage.setItem('loggedInEmail', email);
+          alert('✅ Login successful!');
+          window.location.href = `learner_dashboard.html?email=${encodeURIComponent(email)}`;
+        } else {
+          alert(result.message || '❌ Login failed.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Server error. Please try again later.');
+      }
+    });
+  </script>
+
+</body>
+
+</html>

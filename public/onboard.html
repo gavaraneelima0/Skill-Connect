@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learner Onboarding</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #1e1e2f, #282c34);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .slide {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 500px;
+      background: #2c2f3a;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    label {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      padding: 10px;
+      margin-top: 5px;
+      width: 100%;
+      font-size: 1em;
+      border-radius: 6px;
+      border: none;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #00cba9;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      background-color: #007bff;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .tag span {
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    .suggestions {
+      background: #444857;
+      border: 1px solid #666;
+      max-height: 100px;
+      overflow-y: auto;
+      position: relative;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .suggestions div {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .suggestions div:hover {
+      background-color: #555a6b;
+    }
+
+    .back-button {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      background: transparent;
+      border: none;
+      color: #00cba9;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .back-button:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Learner Onboarding</h2>
+
+  <!-- Slide 0 -->
+  <div class="slide active" id="slide0">
+    <label for="profilePic">Upload Profile Picture *</label>
+    <input type="file" id="profilePic" accept="image/*" required>
+    <button onclick="validateAndNext(0)">Next</button>
+    <button onclick="nextSlide()">Skip for now</button>
+  </div>
+
+  <!-- Slide 1 -->
+  <div class="slide" id="slide1">
+    <button class="back-button" onclick="goBack()">← Back</button>
+    <label for="institute">Institute Name *</label>
+    <input type="text" id="institute" required>
+    <label for="branch">Branch *</label>
+    <input type="text" id="branch" required>
+    <label for="batch">Batch (e.g., 2020-2024) *</label>
+    <input type="text" id="batch" required>
+    <label for="cgpa">Percentage / CGPA *</label>
+    <input type="text" id="cgpa" required>
+    <label for="achievements">Achievements (optional)</label>
+    <textarea id="achievements"></textarea>
+    <button onclick="validateAndNext(1)">Next</button>
+    <button onclick="nextSlide()">Skip for now</button>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide" id="slide2">
+    <button class="back-button" onclick="goBack()">← Back</button>
+    <label for="sectorSelect">Select Sector *</label>
+    <select id="sectorSelect" required>
+      <option value="">-- Select Sector --</option>
+      <option value="IT">IT</option>
+      <option value="Healthcare">Healthcare</option>
+      <option value="Construction">Construction</option>
+      <option value="Retail">Retail</option>
+    </select>
+    <label for="domainInput">Search & Select Domains</label>
+    <input type="text" id="domainInput" placeholder="Type to search...">
+    <div id="suggestions" class="suggestions"></div>
+    <div id="selectedDomains" class="tags"></div>
+    <label for="experience">Experience (in years)</label>
+    <input type="number" id="experience" min="0" max="50">
+    <button onclick="validateAndNext(2)">Next</button>
+    <button onclick="nextSlide()">Skip for now</button>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide" id="slide3">
+    <button class="back-button" onclick="goBack()">← Back</button>
+    <label for="softSkillInput">Add Common (Soft) Skills</label>
+    <input type="text" id="softSkillInput" placeholder="Type to search...">
+    <div id="softSkillSuggestions" class="suggestions"></div>
+    <div id="softSkillTags" class="tags"></div>
+    <button onclick="submitForm()">Finish</button>
+    <button onclick="submitForm()">Skip for now</button>
+  </div>
+
+  <script>
+    const apiBase = window.location.origin;
+    let currentSlide = 0;
+    let profilePicBase64 = null;
+    const selectedDomains = [];
+    const selectedSoftSkills = [];
+
+    const domains = {
+      IT: ["Web Development", "App Development", "Data Science", "Cybersecurity", "Cloud", "AI/ML", "DevOps", "UI/UX Design", "System Administration", "Business Analysis", "Blockchain", "Game Development", "AR/VR Development", "Database Administration"],
+      Healthcare: ["Nursing", "Pharmacy", "Lab Technician", "Physiotherapy", "Medical Coding"],
+      Construction: ["Masonry", "Carpentry", "Plumbing", "Electrical Work", "Site Supervision"],
+      Retail: ["Sales", "Cashier", "Inventory", "Visual Merchandising"]
+    };
+
+    const commonSoftSkills = [
+      "Communication", "Teamwork", "Problem-Solving", "Leadership", "Adaptability",
+      "Creativity", "Time Management", "Critical Thinking", "Conflict Resolution", "Emotional Intelligence"
+    ];
+
+    function showSlide(index) {
+      document.querySelectorAll('.slide').forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+    }
+
+    function nextSlide() {
+      if (currentSlide < 3) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function goBack() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+    function validateAndNext(slideNumber) {
+      const inputs = document.querySelectorAll(`#slide${slideNumber} input, #slide${slideNumber} select, #slide${slideNumber} textarea`);
+      let allFilled = true;
+
+      inputs.forEach(input => {
+        if (input.type !== "file" && input.hasAttribute("required") && !input.value.trim()) {
+          allFilled = false;
+          input.style.border = "2px solid red";
+        } else {
+          input.style.border = "";
+        }
+      });
+
+      if (allFilled) nextSlide();
+      else alert("❗ Please fill all required fields.");
+    }
+
+    document.getElementById("profilePic").addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => profilePicBase64 = reader.result;
+        reader.readAsDataURL(file);
+      }
+    });
+
+    const domainInput = document.getElementById("domainInput");
+    const suggestions = document.getElementById("suggestions");
+    const selectedDomainsDiv = document.getElementById("selectedDomains");
+    const sectorSelect = document.getElementById("sectorSelect");
+
+    domainInput.addEventListener("input", () => {
+      const val = domainInput.value.toLowerCase();
+      suggestions.innerHTML = "";
+      const sector = sectorSelect.value;
+      if (!val || !domains[sector]) return;
+      domains[sector].filter(d => d.toLowerCase().includes(val) && !selectedDomains.includes(d)).forEach(d => {
+        const div = document.createElement("div");
+        div.textContent = d;
+        div.onclick = () => addDomain(d);
+        suggestions.appendChild(div);
+      });
+    });
+
+    function addDomain(domain) {
+      selectedDomains.push(domain);
+      const tag = document.createElement("div");
+      tag.className = "tag";
+      tag.innerHTML = `${domain} <span onclick="removeDomain('${domain}', this)">×</span>`;
+      selectedDomainsDiv.appendChild(tag);
+      domainInput.value = "";
+      suggestions.innerHTML = "";
+    }
+
+    function removeDomain(domain, el) {
+      const index = selectedDomains.indexOf(domain);
+      if (index !== -1) selectedDomains.splice(index, 1);
+      selectedDomainsDiv.removeChild(el.parentElement);
+    }
+
+    const softSkillInput = document.getElementById("softSkillInput");
+    const softSkillSuggestions = document.getElementById("softSkillSuggestions");
+    const softSkillTags = document.getElementById("softSkillTags");
+
+    softSkillInput.addEventListener("input", () => {
+      const val = softSkillInput.value.toLowerCase();
+      softSkillSuggestions.innerHTML = "";
+      commonSoftSkills.filter(skill =>
+        skill.toLowerCase().includes(val) && !selectedSoftSkills.includes(skill)
+      ).forEach(skill => {
+        const div = document.createElement("div");
+        div.textContent = skill;
+        div.onclick = () => addSoftSkill(skill);
+        softSkillSuggestions.appendChild(div);
+      });
+    });
+
+    softSkillInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const val = softSkillInput.value.trim();
+        if (val && !selectedSoftSkills.includes(val)) {
+          addSoftSkill(val);
+        }
+      }
+    });
+
+    function addSoftSkill(skill) {
+      selectedSoftSkills.push(skill);
+      const tag = document.createElement("div");
+      tag.className = "tag";
+      tag.innerHTML = `${skill} <span onclick="removeSoftSkill('${skill}', this)">×</span>`;
+      softSkillTags.appendChild(tag);
+      softSkillInput.value = "";
+      softSkillSuggestions.innerHTML = "";
+    }
+
+    function removeSoftSkill(skill, el) {
+      const index = selectedSoftSkills.indexOf(skill);
+      if (index !== -1) selectedSoftSkills.splice(index, 1);
+      softSkillTags.removeChild(el.parentElement);
+    }
+
+    async function submitForm() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const email = urlParams.get("email");
+
+      if (!email) return alert("❌ Email not found in URL.");
+      if (!profilePicBase64) return alert("❗ Upload a profile picture.");
+
+      const payload = {
+        email,
+        profilePic: profilePicBase64,
+        sector: sectorSelect.value,
+        domains: selectedDomains,
+        experience: document.getElementById("experience").value,
+        academic: {
+          institute: document.getElementById("institute").value,
+          branch: document.getElementById("branch").value,
+          batch: document.getElementById("batch").value,
+          cgpa: document.getElementById("cgpa").value,
+          achievements: document.getElementById("achievements").value
+        },
+        softSkills: selectedSoftSkills
+      };
+
+      try {
+        const res = await fetch(`${apiBase}/api/learners/onboard`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (res.ok) {
+          alert("✅ Onboarding complete!");
+          window.location.href = "learner_login.html";
+        } else {
+          alert("❌ Failed: " + result.error);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Network/server error.");
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      showSlide(currentSlide);
+    });
+  </script>
+</body>
+</html>

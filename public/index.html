@@ -1,95 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Select User Role</title>
-    <style>
-        body {
-           
-            font-family: Arial, sans-serif;
-            background: linear-gradient( #2E3192, #0e1627);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        h1 {
-            font-size: 2.5em;
-            color: black;
-        }
-        
-        .box {
-            background-color: white;
-            width: 90%;
-            max-width: 600px;
-            margin: 150px;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-        
-        .box h2 {
-            margin-bottom: 30px;
-            font-size: 1.5em;
-            color: #444;
-        }
-        
-        .user-options {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .user {
-            text-align: center;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .user img {
-            height: 140px;
-            width: 140px;
-            border-radius: 50%;
-            border: 2px solid #ccc;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
-        
-        .user:hover img {
-            transform: scale(1.05);
-            border-color: #444;
-        }
-        
-        .user p {
-            margin-top: 10px;
-            font-size: 1.1em;
-            color: #333;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome - Skill Connect</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #1a1a2e, #16213e);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .role-selection {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+    }
+
+    .role {
+      background: #0f3460;
+      padding: 20px 30px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: white;
+      font-size: 1.2rem;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .role:hover {
+      background: #533483;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+      .role-selection {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <h1>Welcome to Our Website</h1>
-    <div class="box">
-        <h2>Please select your role to continue</h2>
-        <div class="user-options">
-            <a class="user" href="learner.html">
-                <img src="learner.png" alt="Learner">
-                <p>Learner</p>
-            </a>
-            <a class="user" href="employer.html">
-                <img src="employer.webp" alt="Employer">
-                <p>Employer</p>
-            </a>
-        </div>
+  <div class="container">
+    <h1>Welcome to Skill Connect</h1>
+    <p>Select your role to continue:</p>
+    <div class="role-selection">
+      <a href="learner_login.html" class="role">🎓 Learner</a>
+      <a href="employer_login.html" class="role">🏢 Employer</a>
     </div>
+  </div>
 </body>
-
 </html>

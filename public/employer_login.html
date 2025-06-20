@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employer Login</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      font-family: 'Roboto', sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background: #121212;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      width: 350px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      background: #1e1e1e;
+      color: white;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    a {
+      color: #9fa8da;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Employer Login</h2>
+    <form id="employerLoginForm">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+    <a href="employer_register.html">New user? Register here</a>
+  </div>
+
+  <script>
+    const apiBase = window.location.origin;
+
+    document.getElementById('employerLoginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch(`${apiBase}/api/employers/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert("✅ Login successful!");
+          sessionStorage.setItem("employerEmail", email);
+          window.location.href = `employer_dashboard.html?email=${encodeURIComponent(email)}`;
+        } else {
+          alert(result.error || "❌ Invalid login.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Server error.");
+      }
+    });
+  </script>
+</body>
+</html>

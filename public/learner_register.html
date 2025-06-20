@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learner Registration</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(#2E3192, #0e1627);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding-top: 60px;
+    }
+    .box {
+      background-color: white;
+      width: 500px;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    .gender-group {
+      margin-bottom: 15px;
+    }
+    .gender-group label {
+      margin-right: 20px;
+    }
+    button {
+      background-color: #5a67d8;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      background-color: #434190;
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .login-link a {
+      color: #5a67d8;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Learner Registration</h2>
+    <form id="registrationForm">
+      <input type="text" id="firstName" placeholder="First Name" required />
+      <input type="text" id="lastName" placeholder="Last Name" required />
+      <input type="date" id="dob" required />
+
+      <div class="gender-group">
+        <label>Gender:</label>
+        <label><input type="radio" name="gender" value="Male" required /> Male</label>
+        <label><input type="radio" name="gender" value="Female" required /> Female</label>
+        <label><input type="radio" name="gender" value="Other" required /> Other</label>
+      </div>
+
+      <input type="email" id="email" placeholder="Email Address" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="number" id="mobile" placeholder="Mobile Number" required/>
+      <button type="submit">Register</button>
+    </form>
+    <div class="login-link">
+      Already registered? <a href="learner_login.html">Login here</a>
+    </div>
+  </div>
+
+  <script>
+    const apiBase = window.location.origin; // Update if hosted
+
+    document.getElementById("registrationForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const genderElems = document.getElementsByName("gender");
+      let gender = "";
+      for (let g of genderElems) if (g.checked) gender = g.value;
+
+      const user = {
+        firstName: document.getElementById("firstName").value.trim(),
+        lastName: document.getElementById("lastName").value.trim(),
+        dob: document.getElementById("dob").value,
+        gender: gender,
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value.trim(),
+        mobile:document.getElementById("mobile").value.trim(),
+      };
+
+      try {
+        const res = await fetch(`${apiBase}/api/learners/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert("✅ Registration successful!");
+           window.location.href = `onboard.html?email=${encodeURIComponent(user.email)}`;
+        } else {
+          alert(`❌ ${data.error}`);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Server error. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>
