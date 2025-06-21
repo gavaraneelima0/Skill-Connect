@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillConnect | Get Started</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #e2e8f0;
+            --text-muted: #94a3b8;
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            --secondary-gradient: linear-gradient(135deg, #60a5fa 0%, #818cf8 100%);
+            --accent: #38bdf8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+        
+        .user-type-container {
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #a5b4fc, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .user-options {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        
+        .user-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 200px;
+        }
+        
+        .user-option:hover {
+            transform: translateY(-5px);
+        }
+        
+        .user-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .user-option:hover .user-avatar {
+            border-color: var(--accent);
+            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.3);
+        }
+        
+        .user-avatar img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+        
+        .user-label {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .user-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .cta-button {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            margin-top: 3rem;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+            background: var(--secondary-gradient);
+        }
+        
+        footer {
+            background: var(--card-bg);
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        @media (max-width: 768px) {
+            .user-options {
+                flex-direction: column;
+                align-items: center;
+                gap: 2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .user-avatar {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">SkillConnect</div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="user-type-container">
+            <h1 class="section-title">Welcome to SkillConnect</h1>
+            <p class="subtitle">Are you looking to develop new skills or find qualified candidates? Select your profile type to continue.</p>
+            
+            <div class="user-options">
+                <div class="user-option" onclick="selectUserType('learner')">
+                    <div class="user-avatar">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Learner">
+                    </div>
+                    <h3 class="user-label">Learner</h3>
+                </div>
+                
+                <div class="user-option" onclick="selectUserType('employee')">
+                    <div class="user-avatar">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3281/3281289.png" alt="Employer">
+                    </div>
+                    <h3 class="user-label">Employer</h3>
+                </div>
+            </div>
+            
+            <a href="#" class="cta-button" id="continueBtn" style="display: none; opacity: 0; transition: opacity 0.3s;">
+                Continue as <span id="selectedType"></span>
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 SkillConnect. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let selectedType = null;
+        
+        function selectUserType(type) {
+            selectedType = type;
+            
+            // Update UI
+            document.querySelectorAll('.user-option').forEach(option => {
+                option.style.opacity = '0.6';
+                option.querySelector('.user-avatar').style.borderColor = 'transparent';
+            });
+            
+            const selectedOption = document.querySelector(`.user-option[onclick="selectUserType('${type}')"]`);
+            selectedOption.style.opacity = '1';
+            selectedOption.querySelector('.user-avatar').style.borderColor = 'var(--accent)';
+            
+            // Show continue button
+            const continueBtn = document.getElementById('continueBtn');
+            const selectedTypeSpan = document.getElementById('selectedType');
+            
+            selectedTypeSpan.textContent = type === 'learner' ? 'Learner' : 'Employer';
+            continueBtn.style.display = 'inline-block';
+            setTimeout(() => {
+                continueBtn.style.opacity = '1';
+            }, 10);
+            
+            // Update continue button link
+            continueBtn.href = type === 'learner' ? 'learner_login.html' : 'employer_login.html';
+        }
+        
+        // Add slight animation to options on load
+        document.querySelectorAll('.user-option').forEach((option, index) => {
+            option.style.opacity = '0';
+            option.style.transform = 'translateY(20px)';
+            option.style.transition = 'all 0.5s ease ' + (index * 0.1) + 's';
+            
+            setTimeout(() => {
+                option.style.opacity = '1';
+                option.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

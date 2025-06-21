@@ -1,130 +1,513 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Learner Registration</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(#2E3192, #0e1627);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      padding-top: 60px;
-    }
-    .box {
-      background-color: white;
-      width: 500px;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-    }
-    .gender-group {
-      margin-bottom: 15px;
-    }
-    .gender-group label {
-      margin-right: 20px;
-    }
-    button {
-      background-color: #5a67d8;
-      color: white;
-      border: none;
-    }
-    button:hover {
-      background-color: #434190;
-    }
-    .login-link {
-      text-align: center;
-      margin-top: 15px;
-    }
-    .login-link a {
-      color: #5a67d8;
-      text-decoration: none;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillConnect | Learner Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --deep-blue: #0f172a;
+            --card-dark: #1e293b;
+            --light-text: #f8fafc;
+            --muted-text: #94a3b8;
+            --learner-primary: #6366f1;
+            --learner-secondary: #8b5cf6;
+            --accent: #38bdf8;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--deep-blue);
+            color: var(--light-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(56, 189, 248, 0.15) 0%, transparent 30%);
+        }
+
+        /* Header */
+        .learner-header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 1rem 2rem;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: linear-gradient(90deg, var(--learner-primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .login-link {
+            color: var(--muted-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .login-link:hover {
+            color: var(--accent);
+        }
+
+        /* Main Content */
+        .register-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .register-card {
+            background: var(--card-dark);
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 32rem;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, var(--learner-primary), var(--learner-secondary));
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .register-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .register-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .register-body {
+            padding: 2rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--muted-text);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            color: var(--light-text);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--learner-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-text);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .strength-meter {
+            height: 100%;
+            width: 0%;
+            background: var(--error);
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .register-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--learner-primary), var(--learner-secondary));
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .register-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--muted-text);
+            font-size: 0.8rem;
+        }
+
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 0 0.5rem;
+        }
+
+        .login-link-bottom {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--muted-text);
+            margin-top: 20px;
+        }
+
+        .login-link-bottom a {
+            color: var(--learner-primary);
+            font-weight: 500;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .login-link-bottom a:hover {
+            opacity: 0.8;
+        }
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 640px) {
+            .register-header {
+                padding: 1.5rem;
+            }
+            
+            .register-body {
+                padding: 1.5rem;
+            }
+            
+            .register-title {
+                font-size: 1.5rem;
+            }
+            
+            .header-container {
+                padding: 0;
+            }
+            
+            .register-container {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .two-column-fields {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="box">
-    <h2>Learner Registration</h2>
-    <form id="registrationForm">
-      <input type="text" id="firstName" placeholder="First Name" required />
-      <input type="text" id="lastName" placeholder="Last Name" required />
-      <input type="date" id="dob" required />
+    <header class="learner-header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap logo-icon"></i>
+                <span>SkillConnect</span>
+            </div>
+            <a href="learner-login.html" class="login-link">
+                <i class="fas fa-sign-in-alt"></i> Existing Learner? Sign In
+            </a>
+        </div>
+    </header>
 
-      <div class="gender-group">
-        <label>Gender:</label>
-        <label><input type="radio" name="gender" value="Male" required /> Male</label>
-        <label><input type="radio" name="gender" value="Female" required /> Female</label>
-        <label><input type="radio" name="gender" value="Other" required /> Other</label>
-      </div>
-
-      <input type="email" id="email" placeholder="Email Address" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <input type="number" id="mobile" placeholder="Mobile Number" required/>
-      <button type="submit">Register</button>
-    </form>
-    <div class="login-link">
-      Already registered? <a href="learner_login.html">Login here</a>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <h1 class="register-title">Start Your Learning Journey</h1>
+                <p class="register-subtitle">Create your free learner account in 30 seconds</p>
+            </div>
+            
+            <div class="register-body">
+                <form id="learnerRegisterForm">
+                    <div style="display: flex; gap: 1rem;" class="two-column-fields">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="firstName" class="input-label">First Name</label>
+                            <input type="text" id="firstName" class="input-field" placeholder="John" required>
+                            <div class="error-message" id="firstNameError">Please enter your first name</div>
+                        </div>
+                        
+                        <div class="form-group" style="flex: 1;">
+                            <label for="lastName" class="input-label">Last Name</label>
+                            <input type="text" id="lastName" class="input-field" placeholder="Doe" required>
+                            <div class="error-message" id="lastNameError">Please enter your last name</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="input-label">Email</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="email" class="input-field" placeholder="you@university.edu" required>
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+                        <div class="error-message" id="emailError">Please enter a valid educational email</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone" class="input-label">Phone Number</label>
+                        <div class="input-wrapper">
+                            <input type="tel" id="phone" class="input-field" placeholder="+91 0123456789" required>
+                            <i class="fas fa-phone input-icon"></i>
+                        </div>
+                        <div class="error-message" id="phoneError">Please enter a valid phone number</div>
+                    </div>
+                    
+                    
+                    <div class="form-group">
+                        <label for="password" class="input-label">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" class="input-field" placeholder="••••••••" required minlength="8">
+                            <i class="fas fa-eye input-icon" id="togglePassword"></i>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-meter" id="strengthMeter"></div>
+                        </div>
+                        <div class="error-message" id="passwordError">Password must be at least 8 characters</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword" class="input-label">Confirm Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="confirmPassword" class="input-field" placeholder="••••••••" required>
+                            <i class="fas fa-check-circle input-icon" id="confirmPasswordIcon"></i>
+                        </div>
+                        <div class="error-message" id="confirmPasswordError">Passwords do not match</div>
+                    </div>
+                    
+                    <button type="submit" class="register-button" >
+                        <i class="fas fa-user-plus"></i> Create Learner Account
+                    </button>
+            
+                    <p class="login-link-bottom">
+                        Already have an account? <a href="learner_login.html">Sign in here</a>
+                    </p>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    const apiBase = window.location.origin; // Update if hosted
+    <script>
+        // DOM Elements
+        const form = document.getElementById('learnerRegisterForm');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const confirmPasswordIcon = document.getElementById('confirmPasswordIcon');
+        const strengthMeter = document.getElementById('strengthMeter');
 
-    document.getElementById("registrationForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      const genderElems = document.getElementsByName("gender");
-      let gender = "";
-      for (let g of genderElems) if (g.checked) gender = g.value;
-
-      const user = {
-        firstName: document.getElementById("firstName").value.trim(),
-        lastName: document.getElementById("lastName").value.trim(),
-        dob: document.getElementById("dob").value,
-        gender: gender,
-        email: document.getElementById("email").value.trim(),
-        password: document.getElementById("password").value.trim(),
-        mobile:document.getElementById("mobile").value.trim(),
-      };
-
-      try {
-        const res = await fetch(`${apiBase}/api/learners/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(user)
+        // Toggle password visibility
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.classList.toggle('fa-eye-slash');
         });
 
-        const data = await res.json();
 
-        if (res.ok) {
-          alert("✅ Registration successful!");
-           window.location.href = `onboard.html?email=${encodeURIComponent(user.email)}`;
-        } else {
-          alert(`❌ ${data.error}`);
+        // Password strength meter
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength += 25;
+            if (password.length >= 12) strength += 25;
+            
+            // Complexity checks
+            if (/[A-Z]/.test(password)) strength += 15;
+            if (/[0-9]/.test(password)) strength += 15;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+            
+            // Update meter
+            strengthMeter.style.width = `${strength}%`;
+            strengthMeter.style.backgroundColor = 
+                strength < 50 ? 'var(--error)' : 
+                strength < 75 ? '#f59e0b' : 'var(--success)';
+        });
+
+        // Password confirmation check
+        confirmPasswordInput.addEventListener('input', () => {
+            const passwordsMatch = passwordInput.value === confirmPasswordInput.value;
+            confirmPasswordIcon.style.color = passwordsMatch ? 'var(--success)' : 'var(--error)';
+        });
+
+        // Form validation
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            let isValid = true;
+
+            // Reset errors
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+            // Validate email format
+            const email = document.getElementById('email').value;
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate password
+            if (passwordInput.value.length < 8) {
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate password match
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate mobile number
+            const phone = document.getElementById('phone').value;
+            if (phone.length < 8 || !/^[+]?[0-9]{8,15}$/.test(phone)) {
+              document.getElementById('phoneError').style.display = 'block';
+              isValid = false;
+            }
+
+
+            if (isValid) {
+                // Show loading state
+              //  const submitBtn = form.querySelector('button[type="submit"]');
+              //  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+              //  submitBtn.disabled = true;
+
+                const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+
+        try {
+            const response = await fetch('/api/learners/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email,
+                    password: passwordInput.value,
+                    mobile: phone
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                alert(result.error || 'Registration failed. Try again.');
+             //   submitBtn.innerHTML = 'Create Account';
+              //  submitBtn.disabled = false;
+                return;
+            }
+
+            alert('🎉 Account created successfully! Redirecting to your dashboard...');
+            sessionStorage.setItem("learnerEmail", email);
+            window.location.href = `onboard.html?email=${encodeURIComponent(email)}`;
+
+        } catch (err) {
+            console.error(err);
+            alert('Something went wrong. Please try again.');
+           // submitBtn.innerHTML = 'Create Account';
+            //submitBtn.disabled = false;
         }
-      } catch (err) {
-        console.error(err);
-        alert("❌ Server error. Please try again.");
-      }
-    });
-  </script>
+    }
+});
+
+
+        // Real-time validation for required fields
+        form.querySelectorAll('[required]').forEach(input => {
+            input.addEventListener('blur', () => {
+                if (!input.value) {
+                    const errorId = `${input.id}Error`;
+                    if (document.getElementById(errorId)) {
+                        document.getElementById(errorId).style.display = 'block';
+                    }
+                }
+            });
+        });
+
+        // Phone number validation
+        document.getElementById('phone').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9+]/g, '');
+        });
+        
+    </script>
 </body>
 </html>

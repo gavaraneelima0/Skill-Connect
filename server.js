@@ -7,6 +7,8 @@ const bcrypt = require('bcrypt'); // Make sure this is at the top of your file
 const multer = require('multer');
 const fs = require('fs');
 const app = express();
+const compression = require('compression');
+
 const PORT = process.env.PORT || 3000;
 
 // ---------------- MongoDB Connection ----------------
@@ -18,47 +20,84 @@ mongoose.connect(process.env.MONGO_URI, {
 .catch(err => console.error("❌ MongoDB error:", err));
 
 // ---------------- Middleware ----------------
+app.use(express.json({ limit: '5mb' }));       // or larger if needed
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use(cors());
 app.use(express.json());
+app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 const uploadsPath = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsPath)) fs.mkdirSync(uploadsPath);
 app.use('/uploads', express.static(uploadsPath));
 
 
-// ---------------- Mongoose Schema ----------------
-const learnerSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  email: { type: String, unique: true },
-  password: { type: String, required: true },
-  profilePic: String,
-   profileLink: String,
-  about: String,
-  skills: [{ name: String, verified: Boolean }],
-  certifications: [{
-    title: String,
-    issuer: String,
-    date: String,
-    filePath: String
-  }],
-  experience: [{
-    title: String,
-    company: String,
-    duration: String,
-    description: String
-  }],
-  academic: [{
-    institute: String,
-    branch: String,
-    batch: String,
-    cgpa: String,
-    achievements: String
-  }]
- 
-});
+// ---------------- Mongoose Schema ---------------
 
-const Learner = mongoose.model('Learner', learnerSchema);
+const LearnerSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  username: String,
+  profilePic: String, // base64 image
+
+  // 🔐 Auth
+  password: String, // hashed
+
+  // 📞 Basic Info
+  phone: String,
+  gender: String,
+
+  // 🧠 Onboarding Data
+  sector: String,
+  domains: [String],
+  experience: String,
+
+  // 🎓 Education
+  education: {
+    level: String,
+    institute: String,
+    yearPassing: String,
+    percentage: String
+  },
+
+  // 🧠 Skills
+  skills: [
+    {
+      name: String,
+      verified: { type: Boolean, default: false }
+    }
+  ],
+
+  // 📄 Certificates
+  certs: [
+    {
+      name: String,
+      org: String,
+      file: String // certificate filename or base64
+    }
+  ],
+
+  // 🌐 Languages
+  languages: [
+    {
+      name: String,
+      proficiency: String
+    }
+  ],
+
+  // 💼 Experience
+  work: [
+    {
+      title: String,
+      company: String,
+      start: Date,
+      end: Date,
+      desc: String
+    }
+  ],
+  mobile: String,
+  profileLink: String
+
+});
+const Learner = mongoose.model('Learner', LearnerSchema);
 
 const employerSchema = new mongoose.Schema({
   firstName: String,
@@ -111,7 +150,7 @@ app.get('/', (req, res) => {
 // Register learner
 app.post('/api/learners/register', async (req, res) => {
   try {
-    const { firstName, lastName, dob, gender, email, password, mobile } = req.body;
+    const { firstName, lastName, dob, email, password, mobile } = req.body;
 
     if (!firstName || !lastName || !email || !password || !mobile) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -127,8 +166,6 @@ app.post('/api/learners/register', async (req, res) => {
     const newLearner = new Learner({
       firstName,
       lastName,
-      dob,
-      gender,
       email,
       password: hashedPassword, // ✅ Save hashed password
       mobile
@@ -173,26 +210,22 @@ app.post('/api/employers/register', async (req, res) => {
   }
 });
 
-
+//learner login
 app.post('/api/learners/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    const learner = await Learner.findOne({ email });
 
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required." });
     }
 
-    const user = await Learner.findOne({ email });
-    if (!user || !user.password) {
-      return res.status(401).json({ error: "Invalid email or password." });
-    }
-
-    const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(password, learner.password);
     if (!match) {
       return res.status(401).json({ error: "Invalid email or password." });
     }
 
-    res.json({ message: "Login successful", email: user.email });
+    res.json({ message: "Login successful", email: learner.email });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Server error during login" });
@@ -221,110 +254,89 @@ app.post('/api/employers/login', async (req, res) => {
 });
 
 //onboard learner
+// Learner onboarding - backend
 app.post('/api/learners/onboard', async (req, res) => {
   try {
-    const { email, profilePic, sector, domains, experience, academic, softSkills } = req.body;
+    const {
+      email,            // Make sure this is passed in the payload!
+      profilePic,
+      personalInfo,
+      education,
+      sector,
+      domains,
+      experience
+    } = req.body;
+
+    // 🔍 Validate
+    if (!email) return res.status(400).json({ error: "Email is required" });
 
     const learner = await Learner.findOne({ email });
     if (!learner) return res.status(404).json({ error: "Learner not found" });
 
+    // 📥 Update learner data
     learner.profilePic = profilePic || learner.profilePic;
+    learner.dob = personalInfo?.dob || learner.dob;
+    learner.education = education || learner.education;
     learner.sector = sector || learner.sector;
     learner.domains = Array.isArray(domains) ? domains : learner.domains;
-
-    if (Array.isArray(experience)) {
-      learner.experience = experience;
-    }
-
-    if (academic && typeof academic === 'object') {
-      learner.academic = academic;
-    }
-
-    learner.softSkills = Array.isArray(softSkills) ? softSkills : learner.softSkills;
+    learner.experience = experience || learner.experience;
 
     await learner.save();
+
     res.json({ message: "Onboarding complete" });
   } catch (err) {
-    console.error("🛑 Onboarding error:", err);
+    console.error("❌ Onboarding Error:", err);
     res.status(500).json({ error: "Server error during onboarding" });
   }
 });
 
 
-// Get Learner Data
-app.get('/api/learner/:email', async (req, res) => {
+// GET learner profile
+app.get('/:email/profile', async (req, res) => {
   const learner = await Learner.findOne({ email: req.params.email });
-  if (!learner) return res.status(404).json({ error: "Learner not found" });
+  if (!learner) return res.status(404).json({ error: 'Learner not found' });
   res.json(learner);
 });
 
-// Update Learner Data
-app.put('/api/learner/:email', async (req, res) => {
-  try {
-    const learner = await Learner.findOneAndUpdate(
-      { email: req.params.email },
-      { $set: req.body },
-      { new: true }
-    );
-    if (!learner) return res.status(404).json({ error: "Learner not found" });
-    res.json(learner);
-  } catch (err) {
-    res.status(500).json({ error: "Error updating learner" });
-  }
+// UPDATE base info
+app.put('/:email/profile', async (req, res) => {
+  const updated = await Learner.findOneAndUpdate(
+    { email: req.params.email },
+    { $set: req.body },
+    { new: true, upsert: true }
+  );
+  res.json(updated);
 });
 
-// Upload profile picture
-app.post('/api/learner/:email/upload-profile', upload.single('profile'), async (req, res) => {
-  const profilePic = `/uploads/profiles/${req.file.filename}`;
-  const profileLink = `http://localhost:${PORT}/profile/${req.params.email}`;
-  const learner = await Learner.findOneAndUpdate(
+// ADD to a section
+app.post('/:email/profile/:section', async (req, res) => {
+  const section = req.params.section;
+  const updated = await Learner.findOneAndUpdate(
     { email: req.params.email },
-    { profilePic, profileLink },
+    { $push: { [section]: req.body } },
     { new: true }
   );
-  res.json({ profilePic, profileLink });
+  res.json(updated[section]);
 });
 
-
-// Upload certificate
-app.post('/api/learner/:email/upload-certificate', upload.single('certificate'), async (req, res) => {
+// DELETE item by index
+app.delete('/:email/profile/:section/:index', async (req, res) => {
   const learner = await Learner.findOne({ email: req.params.email });
-  if (!learner) return res.status(404).json({ error: "User not found" });
+  if (!learner) return res.status(404).json({ error: 'Learner not found' });
 
-  const { name, date } = req.body;
-  const fileUrl = `/uploads/certificates/${req.file.filename}`;
-  learner.certifications.push({ name, date, fileUrl });
+  learner[req.params.section].splice(req.params.index, 1);
   await learner.save();
-  res.json(learner.certifications);
+  res.json({ message: 'Item deleted' });
 });
 
-// Add Skill
-app.post('/api/learner/:email/addSkill', async (req, res) => {
-  const { name } = req.body;
+// MARK skill as verified
+app.put('/:email/profile/verify-skill/:index', async (req, res) => {
   const learner = await Learner.findOne({ email: req.params.email });
-  if (!learner) return res.status(404).json({ error: "Learner not found" });
-
-  const exists = learner.skills.find(s => s.name.toLowerCase() === name.toLowerCase());
-  if (exists) return res.status(409).json({ error: "Skill already exists" });
-
-  learner.skills.push({ name, verified: false });
+  learner.skills[req.params.index].verified = true;
   await learner.save();
-  res.json({ message: "Skill added", skills: learner.skills });
+  res.json({ message: 'Skill verified' });
 });
 
-// Verify Skill
-app.post('/api/learner/:email/verifySkill', async (req, res) => {
-  const { name } = req.body;
-  const learner = await Learner.findOne({ email: req.params.email });
-  if (!learner) return res.status(404).json({ error: "Learner not found" });
-
-  const skill = learner.skills.find(s => s.name.toLowerCase() === name.toLowerCase());
-  if (!skill) return res.status(404).json({ error: "Skill not found" });
-
-  skill.verified = true;
-  await learner.save();
-  res.json({ message: "Skill verified", skill });
-});
 
 //Pst jobs
 app.post('/api/employers/:email/jobs', async (req, res) => {

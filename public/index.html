@@ -1,72 +1,422 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Welcome - Skill Connect</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom, #1a1a2e, #16213e);
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .container {
-      text-align: center;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-    }
-
-    .role-selection {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 30px;
-    }
-
-    .role {
-      background: #0f3460;
-      padding: 20px 30px;
-      border-radius: 10px;
-      text-decoration: none;
-      color: white;
-      font-size: 1.2rem;
-      transition: background 0.3s, transform 0.3s;
-    }
-
-    .role:hover {
-      background: #533483;
-      transform: scale(1.05);
-    }
-
-    @media (max-width: 600px) {
-      .role-selection {
-        flex-direction: column;
-        gap: 20px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillConnect | AI-Powered Career Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #e2e8f0;
+            --text-muted: #94a3b8;
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            --secondary-gradient: linear-gradient(135deg, #60a5fa 0%, #818cf8 100%);
+            --accent: #38bdf8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 10rem 2rem 6rem;
+            background: radial-gradient(circle at top right, rgba(30, 41, 59, 0.5) 0%, var(--dark-bg) 60%);
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            background: linear-gradient(to right, #e0e7ff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            color: var(--text-muted);
+        }
+        
+        .cta-button {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            background: var(--secondary-gradient);
+        }
+        
+        .features {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 4rem;
+            background: linear-gradient(to right, #a5b4fc, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .feature-card h3 {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .journey {
+            background: linear-gradient(to bottom, #0f172a, #1e293b);
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+        
+        .steps-container {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin: 3rem auto;
+            flex-wrap: wrap;
+            max-width: 900px;
+        }
+        
+        .step {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.8rem;
+            position: relative;
+            background: var(--card-bg);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .step.active {
+            opacity: 1;
+            transform: translateY(0);
+            background: var(--primary-gradient);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.5);
+            border-color: transparent;
+        }
+        
+        .step::after {
+            content: '';
+            position: absolute;
+            width: 4rem;
+            height: 2px;
+            background: linear-gradient(to right, #3b82f6, transparent);
+            right: -4rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.3;
+        }
+        
+        .step:last-child::after {
+            display: none;
+        }
+        
+        .step-label {
+            position: absolute;
+            bottom: -2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--accent);
+            opacity: 0.8;
+        }
+        
+        footer {
+            background: var(--card-bg);
+            text-align: center;
+            padding: 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: var(--card-bg);
+                padding: 2rem;
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                gap: 1.5rem;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero {
+                padding: 8rem 1.5rem 4rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .step::after {
+                display: none;
+            }
+            
+            .steps-container {
+                gap: 2rem;
+                margin: 2rem auto;
+            }
+            
+            .step {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .step-label {
+                bottom: -2rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome to Skill Connect</h1>
-    <p>Select your role to continue:</p>
-    <div class="role-selection">
-      <a href="learner_login.html" class="role">🎓 Learner</a>
-      <a href="employer_login.html" class="role">🏢 Employer</a>
-    </div>
-  </div>
+    <header>
+        <nav class="navbar">
+            <div class="logo">SkillConnect</div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <a href="#features">Features</a>
+                <a href="#journey">How It Works</a>
+                <a href="home.html" class="cta-button" style="padding: 0.5rem 1.5rem; display: inline-block; color: white;">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Your Smart Career Navigator</h1>
+        <p>Better skill mapping and verified proficiency testing to bridge the gap between talent and opportunity.</p>
+        <button class="cta-button" type="submit" onclick="location.href='home.html'">Start Your Journey</button>
+    </section>
+
+    <section class="features" id="features">
+        <h2 class="section-title">Why SkillConnect?</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h3>Smart Roadmaps</h3>
+                <p>Dynamic learning paths tailored to your career goals with the most in-demand skills.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>Skill Validation</h3>
+                <p>Prove your expertise with our industry-recognized proficiency assessments.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Direct Hiring</h3>
+                <p>Connect with employers who value verified skills over traditional resumes.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="journey" id="journey">
+        <h2 class="section-title">Your Path to Success</h2>
+        <p>From skill development to dream job in 4 steps</p>
+        <div class="steps-container">
+            <div class="step" data-step="1">
+                <span>1</span>
+                <div class="step-label">Build Profile</div>
+            </div>
+            <div class="step" data-step="2">
+                <span>2</span>
+                <div class="step-label">Learn Skills</div>
+            </div>
+            <div class="step" data-step="3">
+                <span>3</span>
+                <div class="step-label">Test Skills</div>
+            </div>
+            <div class="step" data-step="4">
+                <span>4</span>
+                <div class="step-label">Get Hired</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 SkillConnect. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Animate Steps - Now triggers on load AND scroll
+        const steps = document.querySelectorAll('.step');
+        
+        function animateSteps() {
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    step.classList.add('active');
+                }, index * 300);
+            });
+        }
+
+
+        
+        // Initialize animation
+        animateSteps();
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
