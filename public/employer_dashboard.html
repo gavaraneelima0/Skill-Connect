@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Dashboard - SkillConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --dark-lighter: #334155;
+            --text: #e2e8f0;
+            --text-light: #94a3b8;
+            --accent: #60a5fa;
+            --accent-light: #93c5fd;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--dark);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--dark-lighter);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo i {
+            color: var(--accent);
+            font-size: 1.75rem;
+        }
+        
+        .logo h1 {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section-title {
+            color: var(--accent-light);
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            font-size: 1rem;
+        }
+        
+        .card {
+            background: var(--dark-light);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--dark-lighter);
+        }
+        
+        .card-header h3 {
+            color: var(--accent-light);
+            font-weight: 500;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--accent-light);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            border: 1px solid var(--dark-lighter);
+            background-color: var(--dark);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        input::placeholder, textarea::placeholder {
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            gap: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #0d9488;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        .job-list {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .job-item {
+            background-color: var(--dark-light);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .job-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .job-item h3 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+        }
+        
+        .job-item p {
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+            font-size: 0.9375rem;
+        }
+        
+        .job-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .job-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text);
+        }
+        
+        .job-meta-item i {
+            color: var(--accent);
+        }
+        
+        .job-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .applicant-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .applicant-table th, .applicant-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--dark-lighter);
+        }
+        
+        .applicant-table th {
+            background-color: var(--dark-lighter);
+            color: var(--accent-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .applicant-table tr:hover {
+            background-color: var(--dark-lighter);
+        }
+        
+        .proficiency-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .proficiency-bar {
+            flex-grow: 1;
+            height: 6px;
+            background-color: var(--dark-lighter);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .proficiency-fill {
+            height: 100%;
+            background-color: var(--success);
+            border-radius: 3px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+        }
+        
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            opacity: 0.5;
+        }
+        
+        .empty-state p {
+            margin-top: 0.5rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-closed {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .job-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .job-actions {
+                flex-direction: column;
+            }
+            
+            .applicant-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-handshake"></i>
+            <h1>SkillConnect</h1>
+        </div>
+        <button class="btn btn-outline" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </header>
+
+    <div class="container">
+        <section class="job-post-section">
+            <h2 class="section-title">
+                <i class="fas fa-plus-circle"></i> Post New Job
+            </h2>
+            <div class="card">
+                <form id="jobForm">
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title</label>
+                        <input type="text" id="jobTitle" placeholder="e.g. Senior Web Developer" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="jobDescription">Job Description</label>
+                        <textarea id="jobDescription" rows="4" placeholder="Describe the job responsibilities and requirements..." required></textarea>
+                    </div>
+                    
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="jobSkills">Required Skills</label>
+                            <input type="text" id="jobSkills" placeholder="e.g. JavaScript, React, Node.js" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="jobQualification">Qualification</label>
+                            <input type="text" id="jobQualification" placeholder="e.g. Bachelor's Degree in Computer Science" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="jobExperience">Experience</label>
+                            <input type="text" id="jobExperience" placeholder="e.g. 3+ years" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="jobSalary">Salary (Optional)</label>
+                            <input type="text" id="jobSalary" placeholder="e.g. $80,000 - $100,000">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="jobLink">Application Link</label>
+                        <input type="url" id="jobLink" placeholder="https://yourcompany.com/apply" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="jobStatus">Job Status</label>
+                        <select id="jobStatus" required>
+                            <option value="active">Active</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" onclick="saveJob()">
+                        <i class="fas fa-save"></i> Post Job
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section class="job-list-section">
+            <h2 class="section-title">
+                <i class="fas fa-briefcase"></i> Your Job Posts
+            </h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Active Job Listings</h3>
+                    <span class="status-badge status-active" id="activeJobsCount">0 Active Jobs</span>
+                </div>
+                
+                <div class="job-list" id="jobList">
+                    <div class="empty-state">
+                        <i class="fas fa-briefcase"></i>
+                        <h4>No jobs posted yet</h4>
+                        <p>Post your first job to start receiving applications</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="applicants-section hidden" id="applicantsSection">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i> Applicants for <span id="applicantJobTitle"></span>
+            </h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Applicant Details</h3>
+                    <span class="status-badge status-active" id="applicantsCount">0 Applicants</span>
+                </div>
+                
+                <div id="applicantsContainer">
+                    <table class="applicant-table" id="applicantTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Proficiency</th>
+                                <th>Applied On</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicantList">
+                            <!-- Applicants will be loaded here -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="empty-state hidden" id="noApplicants">
+                        <i class="fas fa-user-times"></i>
+                        <h4>No applicants yet</h4>
+                        <p>This job hasn't received any applications yet</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+  if (!sessionStorage.getItem('employerEmail')) {
+    alert('Please log in.');
+    window.location.href = 'employer_login.html';
+    return;
+  }
+  fetchJobsFromServer();
+});
+
+const employerEmail = sessionStorage.getItem("employerEmail");
+let currentEditingJobId = null;
+
+// Helper: create job card element
+function createJobElement(job, applicantsCount) {
+  const jobEl = document.createElement('div');
+  jobEl.className = 'job-item';
+  jobEl.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <h3>${job.title}</h3>
+      <span class="status-badge ${job.status === 'active' ? 'status-active' : 'status-closed'}">
+        ${job.status.charAt(0).toUpperCase()+job.status.slice(1)}
+      </span>
+    </div>
+    <p>${job.desc.substring(0,150)}${job.desc.length>150?'...':''}</p>
+    <div class="job-meta">
+      <span class="job-meta-item"><i class="fas fa-code"></i> ${job.skills}</span>
+      <span class="job-meta-item"><i class="fas fa-graduation-cap"></i> ${job.qualification}</span>
+      <span class="job-meta-item"><i class="fas fa-clock"></i> ${job.experience}</span>
+      ${job.salary? `<span class="job-meta-item"><i class="fas fa-money-bill-wave"></i> ${job.salary}</span>`:``}
+    </div>
+    <div class="job-actions">
+      <button class="btn btn-warning btn-sm" onclick="editJob('${job._id}', ${JSON.stringify(job).replace(/"/g,'&quot;')})"><i class="fas fa-edit"></i> Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteJob('${job._id}')"><i class="fas fa-trash"></i> Delete</button>
+      <button class="btn btn-primary btn-sm" onclick="viewApplicants('${job._id}','${job.title.replace(/'/g,"\\'")}')"><i class="fas fa-users"></i> View Applicants (${applicantsCount})</button>
+    </div>`;
+  return jobEl;
+}
+
+// GET all jobs
+async function fetchJobsFromServer() {
+  try {
+    const res = await fetch(`/api/employers/${encodeURIComponent(employerEmail)}/jobs`);
+    const jobs = await res.json();
+    const jobListEl = document.getElementById('jobList');
+
+    if (!jobs || jobs.length === 0) {
+      jobListEl.innerHTML = `<div class="empty-state"><i class="fas fa-briefcase"></i><h4>No jobs posted yet</h4><p>Post one to get started.</p></div>`;
+      updateActiveJobsCount(jobs);
+      return;
+    }
+
+    jobListEl.innerHTML = '';
+    for (const job of jobs) {
+      const applicantsRes = await fetch(`/api/employers/${encodeURIComponent(employerEmail)}/jobs/${job._id}/applicants`);
+      const ap = await applicantsRes.json();
+      const count = Array.isArray(ap.applicants)? ap.applicants.length : 0;
+      jobListEl.appendChild(createJobElement(job, count));
+    }
+
+    updateActiveJobsCount(jobs);
+  } catch (err) {
+    console.error(err);
+    alert('Error loading job posts.');
+  }
+}
+
+// CREATE or UPDATE job
+async function saveJob() {
+  const job = {
+    id: currentEditingJobId,
+    title: document.getElementById('jobTitle').value.trim(),
+    desc: document.getElementById('jobDescription').value.trim(),
+    skills: document.getElementById('jobSkills').value.trim(),
+    qualification: document.getElementById('jobQualification').value.trim(),
+    experience: document.getElementById('jobExperience').value.trim(),
+    salary: document.getElementById('jobSalary').value.trim(),
+    link: document.getElementById('jobLink').value.trim(),
+    status: document.getElementById('jobStatus').value,
+    postedOn: new Date()
+  };
+
+  if (!job.title || !job.desc || !job.skills || !job.qualification || !job.experience || !job.link) {
+    alert('Please fill all required fields.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/employers/${encodeURIComponent(employerEmail)}/jobs`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(job)
+    });
+    const result = await res.json();
+    if (!res.ok) return alert(result.error || 'Error saving job.');
+    currentEditingJobId = null;
+    document.getElementById('jobForm').reset();
+    document.querySelector('.job-post-section .btn-primary').innerHTML = '<i class="fas fa-save"></i> Post Job';
+    fetchJobsFromServer();
+  } catch (err) {
+    console.error(err);
+    alert('Error saving job.');
+  }
+}
+
+// Prefill form for editing
+function editJob(id, job) {
+  currentEditingJobId = id;
+  document.getElementById('jobTitle').value = job.title;
+  document.getElementById('jobDescription').value = job.desc;
+  document.getElementById('jobSkills').value = job.skills;
+  document.getElementById('jobQualification').value = job.qualification;
+  document.getElementById('jobExperience').value = job.experience;
+  document.getElementById('jobSalary').value = job.salary;
+  document.getElementById('jobLink').value = job.link;
+  document.getElementById('jobStatus').value = job.status;
+  document.querySelector('.job-post-section .btn-primary').innerHTML = '<i class="fas fa-save"></i> Update Job';
+}
+
+// DELETE job
+async function deleteJob(id) {
+  if (!confirm('Delete this job?')) return;
+  try {
+    const res = await fetch(`/api/employers/${encodeURIComponent(employerEmail)}/jobs/${id}`, { method: 'DELETE' });
+    const result = await res.json();
+    if (!res.ok) return alert(result.error || 'Error deleting job.');
+    fetchJobsFromServer();
+    document.getElementById('applicantsSection').classList.add('hidden');
+  } catch (err) {
+    console.error(err);
+    alert('Error deleting job.');
+  }
+}
+
+// View applicants for a specific job
+async function viewApplicants(jobId, jobTitle) {
+  try {
+    const res = await fetch(`/api/employers/${encodeURIComponent(employerEmail)}/jobs/${jobId}/applicants`);
+    const result = await res.json();
+    const apps = result.applicants || [];
+    document.getElementById('applicantJobTitle').textContent = jobTitle;
+    document.getElementById('applicantsCount').textContent = `${apps.length} Applicant(s)`;
+
+    const tbody = document.getElementById('applicantList');
+    tbody.innerHTML = '';
+    apps.forEach(a => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${a.name}</td>
+        <td>${a.email}</td>
+        <td><a href="${a.profileLink}" target="_blank">View Profile</a></td>
+        <td>${new Date(a.appliedOn).toLocaleDateString()}</td>
+        <td>–</td><td>–</td>`;
+      tbody.appendChild(row);
+    });
+
+    document.getElementById('noApplicants').classList.toggle('hidden', apps.length > 0);
+    document.getElementById('applicantTable').classList.toggle('hidden', apps.length === 0);
+    document.getElementById('applicantsSection').classList.remove('hidden');
+    document.getElementById('applicantsSection').scrollIntoView({ behavior: 'smooth' });
+
+  } catch (err) {
+    console.error(err);
+    alert('Error loading applicants.');
+  }
+}
+
+// Count active jobs
+function updateActiveJobsCount(jobs = []) {
+  const count = jobs.filter(j => j.status === 'active').length;
+  document.getElementById('activeJobsCount').textContent = `${count} Active Job${count !== 1 ? 's' : ''}`;
+}
+
+// Logout
+function logout() {
+  sessionStorage.removeItem('employerEmail');
+  window.location.href = 'employer_login.html';
+}
+</script>
+</body>
+</html>
