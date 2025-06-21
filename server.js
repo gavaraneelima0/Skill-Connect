@@ -44,6 +44,8 @@ const LearnerSchema = new mongoose.Schema({
   // 📞 Basic Info
   phone: String,
   gender: String,
+  dob: String,
+
 
   // 🧠 Onboarding Data
   sector: String,
@@ -51,12 +53,12 @@ const LearnerSchema = new mongoose.Schema({
   experience: String,
 
   // 🎓 Education
-  education: {
+  education: [{
     level: String,
     institute: String,
     yearPassing: String,
     percentage: String
-  },
+  }],
 
   // 🧠 Skills
   skills: [
@@ -104,6 +106,8 @@ const employerSchema = new mongoose.Schema({
   lastName: String,
   email: { type: String, unique: true },
   password: String,
+  gender: String,
+  dob: String,
   jobs: [{
     id: String,
     title: String,
